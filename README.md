@@ -12,8 +12,12 @@ The key idea is simple. The idea is that compare the length of item list and cur
 
 ## Scroll Demo
 
+[Scroll implementation](/tui.py#L86-L110)
+
 [![Scroll In Python Curses](https://asciinema.org/a/166994.png)](https://asciinema.org/a/166994)
 
 ## Paging Demo
+
+[Paging implementation](/tui.py#L112-L132)
 
 [![Paging In Python Curses](https://asciinema.org/a/166995.png)](https://asciinema.org/a/166995)
