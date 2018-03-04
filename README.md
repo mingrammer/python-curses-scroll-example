@@ -10,6 +10,19 @@ Scroll and paging are little a bit cumbersome to implement with curses. So, I'd 
 
 The key idea is simple. The idea is that compare the length of item list and current cursor position, then just calculate the next cursor position. Of course, there are some exceptions such as scroll overflow we must deal with.
 
+## Run & Test
+
+Clone this repository and run `python3 tui.py`
+
+> It supports Python 3+ only. With Python 2, It might not be work correctly.
+
+* Scroll
+  * KEY_UP (↑) for scroll up
+  * KEY_DOWN (↓) for scroll down
+* Paging
+  * KEY_LEFT (←) for page up
+  * KEY_RIGHT (→) for page down
+
 ## Scroll Demo
 
 [Scroll implementation](/tui.py#L86-L110)
