@@ -89,22 +89,22 @@ class Screen(object):
         next_line = self.current + direction
 
         # Up direction scroll overflow
-        # current is 0, but top is greater than 0 => there is available items above current cursor position
+        # current cursor position is 0, but top position is greater than 0, so we can scroll up the window
         if (direction == self.UP) and (self.top > 0 and self.current == 0):
             self.top += direction
             return
         # Down direction scroll overflow
-        # next cursor touch the max line, but is less than bottom => there is available items below next cursor position
+        # next cursor position touch the max lines, but absolute position of max lines could not touch the bottom, so we can scroll down the window
         if (direction == self.DOWN) and (next_line == self.max_lines) and (self.top + self.max_lines < self.bottom):
             self.top += direction
             return
         # Scroll up
-        # current or top is greater than 0, so there are more items. we can scroll up
+        # current cursor or top position is greater than 0, so we can scroll up the current cursor
         if (direction == self.UP) and (self.top > 0 or self.current > 0):
             self.current = next_line
             return
         # Scroll down
-        # next cursor position is less than than max line, so there are more items. we can scroll down
+        # next cursor position is less than max lines, and absolute position of next cursor could not touch the bottom, so we can scroll down the current cursor
         if (direction == self.DOWN) and (next_line < self.max_lines) and (self.top + next_line < self.bottom):
             self.current = next_line
             return
@@ -113,15 +113,14 @@ class Screen(object):
         """Paging the window when pressing left/right arrow keys"""
         current_page = (self.top + self.current) // self.max_lines
         next_page = current_page + direction
-        # The last page may have items less than max line,
+        # The last page may have items less than max lines,
         # so we should adjust the current cursor position as maximum item count on last page
         if next_page == self.page:
             self.current = min(self.current, self.bottom % self.max_lines - 1)
 
         # Page up
         # current page is greater than 0, so we can page up
-        # top can not be negative, so if top is going to be negative value,
-        # we should set it as 0 (top position of window)
+        # top position can not be negative, so if top position is going to be negative value, we should set it as 0 (top position of window)
         if (direction == self.UP) and (current_page > 0):
             self.top = max(0, self.top - self.max_lines)
             return
