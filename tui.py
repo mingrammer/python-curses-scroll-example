@@ -135,6 +135,7 @@ class Screen(object):
         """Display the items on window"""
         self.window.erase()
         for idx, item in enumerate(self.items[self.top:self.top + self.max_lines]):
+            # Highlight the current cursor line
             if idx == self.current:
                 self.window.addstr(idx, 0, item, curses.color_pair(2))
             else:
