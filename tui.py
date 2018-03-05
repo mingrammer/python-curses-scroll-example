@@ -84,7 +84,7 @@ class Screen(object):
                 break
 
     def scroll(self, direction):
-        """Scrolling the result window when pressing up/down arrow keys"""
+        """Scrolling the window when pressing up/down arrow keys"""
         # next cursor position after scrolling
         next_line = self.current + direction
 
@@ -110,7 +110,7 @@ class Screen(object):
             return
 
     def paging(self, direction):
-        """Paging the result window when pressing left/right arrow keys"""
+        """Paging the window when pressing left/right arrow keys"""
         current_page = (self.top + self.current) // self.max_lines
         next_page = current_page + direction
         # The last page may have items less than max line,
