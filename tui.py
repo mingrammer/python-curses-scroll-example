@@ -18,8 +18,25 @@ class Screen(object):
             max_lines: Maximum visible line count for `result_window`
             top: Available top line position for current page (used on scrolling)
             bottom: Available bottom line position for whole pages (as length of items)
-            current: Current highlighted line number
-            page: Total page count which being changed dynamically corresponding to result of a query
+            current: Current highlighted line number (as window cursor)
+            page: Total page count which being changed corresponding to result of a query (starts from 0)
+
+            ┌--------------------------------------┐
+            |1. Item                               |
+            |--------------------------------------| <- top = 1
+            |2. Item                               | 
+            |3. Item                               |
+            |4./Item///////////////////////////////| <- current = 3
+            |5. Item                               |
+            |6. Item                               |
+            |7. Item                               |
+            |8. Item                               | <- max_lines = 7
+            |--------------------------------------|
+            |9. Item                               |
+            |10. Item                              | <- bottom = 10
+            |                                      |
+            |                                      | <- page = 1 (0 and 1)
+            └--------------------------------------┘
 
         Returns
             None
@@ -89,22 +106,22 @@ class Screen(object):
         next_line = self.current + direction
 
         # Up direction scroll overflow
-        # current cursor position is 0, but top position is greater than 0, so we can scroll up the window
+        # current cursor position is 0, but top position is greater than 0
         if (direction == self.UP) and (self.top > 0 and self.current == 0):
             self.top += direction
             return
         # Down direction scroll overflow
-        # next cursor position touch the max lines, but absolute position of max lines could not touch the bottom, so we can scroll down the window
+        # next cursor position touch the max lines, but absolute position of max lines could not touch the bottom
         if (direction == self.DOWN) and (next_line == self.max_lines) and (self.top + self.max_lines < self.bottom):
             self.top += direction
             return
         # Scroll up
-        # current cursor or top position is greater than 0, so we can scroll up the current cursor
+        # current cursor position or top position is greater than 0
         if (direction == self.UP) and (self.top > 0 or self.current > 0):
             self.current = next_line
             return
         # Scroll down
-        # next cursor position is less than max lines, and absolute position of next cursor could not touch the bottom, so we can scroll down the current cursor
+        # next cursor position is above max lines, and absolute position of next cursor could not touch the bottom
         if (direction == self.DOWN) and (next_line < self.max_lines) and (self.top + next_line < self.bottom):
             self.current = next_line
             return
@@ -119,13 +136,13 @@ class Screen(object):
             self.current = min(self.current, self.bottom % self.max_lines - 1)
 
         # Page up
-        # current page is greater than 0, so we can page up
-        # top position can not be negative, so if top position is going to be negative value, we should set it as 0 (top position of window)
+        # current page is greater than 0, so page up is possible
+        # top position can not be negative, so if top position is going to be negative, we should set it as 0
         if (direction == self.UP) and (current_page > 0):
             self.top = max(0, self.top - self.max_lines)
             return
         # Page down
-        # current page is less than total page count, so we can page down
+        # current page is less than total page count, so page down is possible
         if (direction == self.DOWN) and (current_page < self.page):
             self.top += self.max_lines
             return
