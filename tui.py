@@ -136,13 +136,13 @@ class Screen(object):
             self.current = min(self.current, self.bottom % self.max_lines - 1)
 
         # Page up
-        # current page is greater than 0, so page up is possible
+        # if current page is not a first page, page up is possible
         # top position can not be negative, so if top position is going to be negative, we should set it as 0
         if (direction == self.UP) and (current_page > 0):
             self.top = max(0, self.top - self.max_lines)
             return
         # Page down
-        # current page is less than total page count, so page down is possible
+        # if current page is not a last page, page down is possible
         if (direction == self.DOWN) and (current_page < self.page):
             self.top += self.max_lines
             return
