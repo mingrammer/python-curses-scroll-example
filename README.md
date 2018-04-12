@@ -34,3 +34,7 @@ Clone this repository and run `python3 tui.py`
 [Paging implementation](/tui.py#L112-L132)
 
 [![Paging In Python Curses](https://asciinema.org/a/166995.png)](https://asciinema.org/a/166995)
+
+## License
+
+MIT
