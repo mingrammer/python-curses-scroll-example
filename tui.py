@@ -56,8 +56,6 @@ class Screen(object):
         self.current = 0
         self.page = self.bottom // self.max_lines
 
-        self.run()
-
     def init_curses(self):
         """Setup the curses"""
         self.window = curses.initscr()
@@ -161,7 +159,8 @@ class Screen(object):
 
 def main():
     items = [f'{num + 1}. Item' for num in range(1000)]
-    Screen(items)
+    screen = Screen(items)
+    screen.run()
 
 
 if __name__ == '__main__':
