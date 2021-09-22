@@ -97,6 +97,8 @@ class Screen(object):
                 self.paging(self.DOWN)
             elif ch == curses.ascii.ESC:
                 break
+            elif ch == curses.KEY_RESIZE:
+                self.resized()
 
     def scroll(self, direction):
         """Scrolling the window when pressing up/down arrow keys"""
@@ -149,12 +151,23 @@ class Screen(object):
         """Display the items on window"""
         self.window.erase()
         for idx, item in enumerate(self.items[self.top:self.top + self.max_lines]):
+            # Truncate the item to the width of the window
+            text = item[:self.width - 1]
             # Highlight the current cursor line
             if idx == self.current:
-                self.window.addstr(idx, 0, item, curses.color_pair(2))
+                self.window.addstr(idx, 0, text, curses.color_pair(2))
             else:
-                self.window.addstr(idx, 0, item, curses.color_pair(1))
+                self.window.addstr(idx, 0, text, curses.color_pair(1))
         self.window.refresh()
+
+    def resized(self):
+        """ Update the stored information about the window when it is resized """
+        curses.update_lines_cols()
+        self.height, self.width = self.window.getmaxyx()
+        self.max_lines = curses.LINES
+        self.page = self.bottom // self.max_lines
+        # Make sure the current selected line is always on screen
+        self.current = min(self.current, self.max_lines - 1)
 
 
 def main():
