@@ -24,7 +24,7 @@ class Screen(object):
             ┌--------------------------------------┐
             |1. Item                               |
             |--------------------------------------| <- top = 1
-            |2. Item                               | 
+            |2. Item                               |
             |3. Item                               |
             |4./Item///////////////////////////////| <- current = 3
             |5. Item                               |
@@ -54,7 +54,6 @@ class Screen(object):
         self.top = 0
         self.bottom = len(self.items)
         self.current = 0
-        self.page = self.bottom // self.max_lines
 
     def init_curses(self):
         """Setup the curses"""
@@ -97,6 +96,8 @@ class Screen(object):
                 self.paging(self.DOWN)
             elif ch == curses.ascii.ESC:
                 break
+            elif ch == curses.KEY_RESIZE:
+                self.resized()
 
     def scroll(self, direction):
         """Scrolling the window when pressing up/down arrow keys"""
@@ -126,35 +127,39 @@ class Screen(object):
 
     def paging(self, direction):
         """Paging the window when pressing left/right arrow keys"""
-        current_page = (self.top + self.current) // self.max_lines
-        next_page = current_page + direction
         # The last page may have fewer items than max lines,
         # so we should adjust the current cursor position as maximum item count on last page
-        if next_page == self.page:
-            self.current = min(self.current, self.bottom % self.max_lines - 1)
+        self.current = min(self.current, self.bottom - self.top - 1)
 
         # Page up
-        # if current page is not a first page, page up is possible
         # top position can not be negative, so if top position is going to be negative, we should set it as 0
-        if (direction == self.UP) and (current_page > 0):
+        if (direction == self.UP):
             self.top = max(0, self.top - self.max_lines)
-            return
         # Page down
-        # if current page is not a last page, page down is possible
-        if (direction == self.DOWN) and (current_page < self.page):
-            self.top += self.max_lines
-            return
+        # top position should not be greater than the number of items, so we must restrict it
+        elif (direction == self.DOWN):
+            self.top += min(self.max_lines, self.bottom - self.top - 1)
 
     def display(self):
         """Display the items on window"""
         self.window.erase()
         for idx, item in enumerate(self.items[self.top:self.top + self.max_lines]):
+            # Truncate the item to the width of the window
+            text = item[:self.width - 1]
             # Highlight the current cursor line
             if idx == self.current:
-                self.window.addstr(idx, 0, item, curses.color_pair(2))
+                self.window.addstr(idx, 0, text, curses.color_pair(2))
             else:
-                self.window.addstr(idx, 0, item, curses.color_pair(1))
+                self.window.addstr(idx, 0, text, curses.color_pair(1))
         self.window.refresh()
+
+    def resized(self):
+        """ Update the stored information about the window when it is resized """
+        curses.update_lines_cols()
+        self.height, self.width = self.window.getmaxyx()
+        self.max_lines = curses.LINES
+        # Make sure the current selected line is always on screen
+        self.current = min(self.current, self.max_lines - 1)
 
 
 def main():
